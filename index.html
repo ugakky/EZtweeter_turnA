@@ -26,11 +26,7 @@
     margin-top: 0;
     margin-bottom: 12px;
   }
-  label {
-    display: block;
-    margin-top: 10px;
-    font-size: 14px;
-  }
+  label { display:block; margin-top:10px; font-size:14px; }
   select {
     width: 100%;
     padding: 8px;
@@ -39,11 +35,7 @@
     border: 1px solid #ddd;
     font-size: 14px;
   }
-  .btn-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-  }
+  .btn-row { display:flex; gap:8px; margin-top:12px; }
   button {
     flex: 1;
     padding: 10px 0;
@@ -52,14 +44,8 @@
     border: none;
     cursor: pointer;
   }
-  button.primary {
-    background: #ff7fbf;
-    color: #fff;
-  }
-  button.secondary {
-    background: #eee;
-    color: #444;
-  }
+  button.primary { background:#ff7fbf; color:#fff; }
+  button.secondary { background:#eee; color:#444; }
   #output {
     width: 100%;
     min-height: 180px;
@@ -70,11 +56,7 @@
     resize: vertical;
     box-sizing: border-box;
   }
-  .small {
-    font-size: 11px;
-    color: #777;
-    margin-top: 6px;
-  }
+  .small { font-size:11px; color:#777; margin-top:6px; }
 </style>
 </head>
 <body>
@@ -101,7 +83,7 @@
 
   <label>時間を選ぶ
     <select id="time">
-      <option value="">選んでね</option>
+      <option value="">指定なし</option>
       <option value="17:00〜">17:00〜</option>
       <option value="19:00〜">19:00〜</option>
       <option value="〜23:00">〜23:00</option>
@@ -116,23 +98,21 @@
   <h3>生成されたツイート</h3>
   <textarea id="output" readonly></textarea>
 
-  <button class="primary" type="button" style="margin-top: 10px;" onclick="copyToClipboard()">
+  <button class="primary" type="button" style="margin-top:10px" onclick="copyToClipboard()">
     このツイートをコピーする
   </button>
-  <div class="small">コピーしたら、そのままXの投稿画面に貼ってね💖</div>
+  <div class="small">※コピーしたらXの投稿画面に貼り付けてね</div>
 </div>
 
 <script>
   var entries = [];
 
   function addEntry() {
-    var nameSelect = document.getElementById("name");
-    var timeSelect = document.getElementById("time");
-    var nameData = nameSelect.value;
-    var time = timeSelect.value;
+    var nameData = document.getElementById("name").value;
+    var time = document.getElementById("time").value;
 
-    if (!nameData || !time) {
-      alert("名前と時間を両方選んでね！");
+    if (!nameData) {
+      alert("名前を選んでね！");
       return;
     }
 
@@ -140,7 +120,11 @@
     var name = parts[0];
     var id = parts[1];
 
-    entries.push(name + " @" + id + " " + time);
+    // 時間が空ならつけない
+    var entry = time ? (name + " @" + id + " " + time)
+                     : (name + " @" + id);
+
+    entries.push(entry);
     generateTweet();
   }
 
@@ -155,12 +139,7 @@
     var today = new Date();
     var date = (today.getMonth() + 1) + "/" + today.getDate();
 
-    var body = "";
-    if (entries.length) {
-      body = entries.join("\n");
-    } else {
-      body = "※ここに追加したキャストさんが表示されるよ";
-    }
+    var body = entries.length ? entries.join("\n") : "※ここに追加したキャストさんが表示されるよ";
 
     var text = "💖" + date + " 本日会える男の娘💖\n\n" +
       body + "\n\n" +
@@ -197,7 +176,7 @@
       document.execCommand("copy");
       alert("コピーしたよ！貼り付けてね💖");
     } catch (e) {
-      alert("自動コピーがうまくいかなかったかも…長押しで全部選択してコピーしてね💦");
+      alert("長押しでコピーしてね💦");
     }
     textarea.readOnly = true;
   }
