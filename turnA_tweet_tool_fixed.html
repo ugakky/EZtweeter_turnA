@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>TurnA ツイート生成機</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 16px;
+    margin: 0;
+    background: #f9f5ff;
+  }
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  h2 {
+    font-size: 20px;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+  label {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+  }
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  button {
+    flex: 1;
+    padding: 10px 0;
+    font-size: 14px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+  }
+  button.primary {
+    background: #ff7fbf;
+    color: #fff;
+  }
+  button.secondary {
+    background: #eee;
+    color: #444;
+  }
+  #output {
+    width: 100%;
+    min-height: 180px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .small {
+    font-size: 11px;
+    color: #777;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>💖 今日会える男の娘 ツイート生成器 💖</h2>
+
+  <label>名前を選ぶ
+    <select id="name">
+      <option value="">選んでね</option>
+      <option value="りお|rio_turn_a">りお</option>
+      <option value="れもん|lemon_turn_a">れもん</option>
+      <option value="みなこ|minako_turn_a">みなこ</option>
+      <option value="れんちょん|renchon_turn_a">れんちょん</option>
+      <option value="あかり|akari_turn_a">あかり</option>
+      <option value="ぴの|pino_turn_a">ぴの</option>
+      <option value="ぱる|paru_turn_a">ぱる</option>
+      <option value="るな|runa_turn_a">るな</option>
+      <option value="セイラ|seira_turn_a">セイラ</option>
+      <option value="つきみ|tukimi_turn_a">つきみ</option>
+      <option value="まや|maya_turn_a">まや</option>
+    </select>
+  </label>
+
+  <label>時間を選ぶ
+    <select id="time">
+      <option value="">選んでね</option>
+      <option value="17:00〜">17:00〜</option>
+      <option value="19:00〜">19:00〜</option>
+      <option value="〜23:00">〜23:00</option>
+    </select>
+  </label>
+
+  <div class="btn-row">
+    <button class="primary" type="button" onclick="addEntry()">この子を追加</button>
+    <button class="secondary" type="button" onclick="clearEntries()">リセット</button>
+  </div>
+
+  <h3>生成されたツイート</h3>
+  <textarea id="output" readonly></textarea>
+
+  <button class="primary" type="button" style="margin-top: 10px;" onclick="copyToClipboard()">
+    このツイートをコピーする
+  </button>
+  <div class="small">コピーしたら、そのままXの投稿画面に貼ってね💖</div>
+</div>
+
+<script>
+  var entries = [];
+
+  function addEntry() {
+    var nameSelect = document.getElementById("name");
+    var timeSelect = document.getElementById("time");
+    var nameData = nameSelect.value;
+    var time = timeSelect.value;
+
+    if (!nameData || !time) {
+      alert("名前と時間を両方選んでね！");
+      return;
+    }
+
+    var parts = nameData.split("|");
+    var name = parts[0];
+    var id = parts[1];
+
+    entries.push(name + " @" + id + " " + time);
+    generateTweet();
+  }
+
+  function clearEntries() {
+    if (!entries.length) return;
+    if (!confirm("全部消すよ、いい？")) return;
+    entries = [];
+    generateTweet();
+  }
+
+  function generateTweet() {
+    var today = new Date();
+    var date = (today.getMonth() + 1) + "/" + today.getDate();
+
+    var body = "";
+    if (entries.length) {
+      body = entries.join("\n");
+    } else {
+      body = "※ここに追加したキャストさんが表示されるよ";
+    }
+
+    var text = "💖" + date + " 本日会える男の娘💖\n\n" +
+      body + "\n\n" +
+      "#コンカフェ #コンカフェ嬢 #宗右衛門町 #男の娘 #女装 #コンカフェ営業 #心斎橋";
+
+    document.getElementById("output").value = text;
+  }
+
+  function copyToClipboard() {
+    var textarea = document.getElementById("output");
+    var text = textarea.value;
+
+    if (!text.trim()) {
+      alert("まだ何も生成されてないよ…！");
+      return;
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        alert("コピーできたよ！Xに貼り付けてね💖");
+      }).catch(function() {
+        fallbackCopy(textarea);
+      });
+    } else {
+      fallbackCopy(textarea);
+    }
+  }
+
+  function fallbackCopy(textarea) {
+    textarea.readOnly = false;
+    textarea.select();
+    textarea.setSelectionRange(0, 99999);
+    try {
+      document.execCommand("copy");
+      alert("コピーしたよ！貼り付けてね💖");
+    } catch (e) {
+      alert("自動コピーがうまくいかなかったかも…長押しで全部選択してコピーしてね💦");
+    }
+    textarea.readOnly = true;
+  }
+
+  generateTweet();
+</script>
+
+</body>
+</html>
