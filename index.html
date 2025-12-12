@@ -62,7 +62,7 @@
 <body>
 
 <div class="container">
-  <h2>💖 今日会える男の娘 ツイート生成器 💖</h2>
+  <h2>今日会える男の娘ツイート生成機</h2>
 
   <label>名前を選ぶ
     <select id="name">
@@ -78,6 +78,8 @@
       <option value="セイラ|seira_turn_a">セイラ</option>
       <option value="つきみ|tukimi_turn_a">つきみ</option>
       <option value="まや|maya_turn_a">まや</option>
+      <option value="みずき|mizuki_turn_a">まや</option>
+      <option value="あおい|aoi_turn_a">まや</option>
     </select>
   </label>
 
@@ -159,7 +161,7 @@
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function() {
-        alert("コピーできたよ！Xに貼り付けてね💖");
+        alert("コピーできたよ！");
       }).catch(function() {
         fallbackCopy(textarea);
       });
@@ -174,9 +176,9 @@
     textarea.setSelectionRange(0, 99999);
     try {
       document.execCommand("copy");
-      alert("コピーしたよ！貼り付けてね💖");
+      alert("コピーしたよ！");
     } catch (e) {
-      alert("長押しでコピーしてね💦");
+      alert("ボタンが動作してないみたい。長押しでコピーしてね💦");
     }
     textarea.readOnly = true;
   }
